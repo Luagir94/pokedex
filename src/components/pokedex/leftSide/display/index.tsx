@@ -12,7 +12,7 @@ const returnType: any[] = [
         border: 1px solid black;
         background-color: rgb(223, 89, 0);
         width: 5rem;
-    border- radius: 5px;
+    border-radius: 5px;
     
     }`},
     {
