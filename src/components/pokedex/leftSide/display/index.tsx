@@ -13,7 +13,6 @@ const returnType: any[] = [
         background-color: rgb(223, 89, 0);
         width: 5rem;
     border-radius: 5px;
-    
     }`},
     {
         type: 'grass',
