@@ -1,14 +1,14 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import { Pokemon } from "../types";
 import axios from "axios";
-type Pagination = { previous: string, next: string, count: number,current: string }
+type Pagination = { previous: string, next: string, count: number, current: string }
 interface PokedexContextI {
     list: Pokemon[],
     selected: Pokemon | null,
     loading: boolean,
     url: string,
     pagination: Pagination,
-    prevUrl? : string,
+    prevUrl?: string,
     setSelected?: (poke: Pokemon) => null | Pokemon,
     paginator?: (string: string) => void,
     setPagination?: (string: string) => string,
@@ -21,7 +21,7 @@ const defaultState = {
     selected: null,
     loading: true,
     url: 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20',
-    pagination: { previous: '', next: 'https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20', count: 1154, current : 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20' },
+    pagination: { previous: '', next: 'https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20', count: 1154, current: 'https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20' },
 
 };
 type Props = {
@@ -46,48 +46,50 @@ const PokedexProvider = ({ children }: Props) => {
     const [selected, setSelected] = useState<Pokemon | null>(defaultState.selected)
     const [pagination, setPagination] = useState<Pagination>(defaultState.pagination)
     const [url, setUrl] = useState<string>(defaultState.url)
-    const [prevUrl, setPrevUrl] = useState<string>('https://pokeapi.co/api/v2/pokemon/?offset=-20&limit=20')
+    const [prevUrl, setPrevUrl] = useState<string>('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20')
     useEffect(() => {
         const getPokes = async () => {
-            try {
-                // 👇️ const data: GetUsersResponse
-                const { data, status } = await axios.get(
-                    url,
-                )
-
-
-                setPagination({ previous: data.previous || '', next: data.next || '', count: data.count , current : url })
-
-                Promise.all(data.results.map((url: UrlResults) =>
-                    fetch(url.url).then(resp => resp.json()))).then((pokes: Pokemon[]) => setList(pokes))
-
-            } catch (error) {
-                if (axios.isAxiosError(error)) {
-                    console.log('error message: ', error.message);
-                    return error.message;
-                } else {
-                    console.log('unexpected error: ', error);
-                    return 'An unexpected error occurred';
-                }
+            if (typeof url === 'string' ) {
+                try {
+                    setLoading(true)
+                    const { data, status } = await axios.get(
+                        url,
+                    )
+    
+    
+                    setPagination({ previous: data.previous || '', next: data.next || '', count: data.count, current: url })
+    
+                    Promise.all(data.results.map((url: UrlResults) =>
+                        fetch(url.url).then(resp => resp.json()))).then((pokes: Pokemon[]) => setList(pokes))
+                    setLoading(false)
+                } catch (error) {
+                    setLoading(false)
+                    if (axios.isAxiosError(error)) {
+                        console.log('error message: ', error.message);
+                        return error.message;
+                    } else {
+                        console.log('unexpected error: ', error);
+                        return 'An unexpected error occurred';
+                    }
+                } 
             }
+          
         }
         getPokes()
-        
+
     }, [url])
     useEffect(() => {
- const actualize = () =>{
-    const params  = url.split('?')[1].split('&')[0].split('=')[1]
-    const prev = prevUrl.split('?')[1].split('&')[0].split('=')[1] || '0'
-    console.log(prevUrl,url);
-    
-    if (parseInt(prev) <= parseInt(params)) {
-        setSelected(list[0])
-    }else{
-        setSelected(list[19])
-    }
-    
- }
- list.length && actualize()
+        const actualize = () => {
+            const params = url.split('?')[1].split('&')[0].split('=')[1]
+            const prev = prevUrl.split('?')[1].split('&')[0].split('=')[1] || '0'
+            if (parseInt(prev) <= parseInt(params)) {
+                setSelected(list[0])
+            } else {
+                setSelected(list[19])
+            }
+
+        }
+        list.length && actualize()
     }, [list])
     const paginator = (page: 'next' | 'prev'): void => {
         if (page === 'next' && typeof page === 'string') {
@@ -96,7 +98,7 @@ const PokedexProvider = ({ children }: Props) => {
             setUrl(pagination.previous)
         }
     }
-    return (<PokedexContext.Provider value={{ loading, selected, list, pagination, url,prevUrl, setPagination, setSelected, paginator, setUrl,setPrevUrl } as unknown as PokedexContextI}>{children}</PokedexContext.Provider>)
+    return (<PokedexContext.Provider value={{ loading, selected, list, pagination, url, prevUrl, setPagination, setSelected, paginator, setUrl, setPrevUrl } as unknown as PokedexContextI}>{children}</PokedexContext.Provider>)
 }
 
 export { PokedexProvider }

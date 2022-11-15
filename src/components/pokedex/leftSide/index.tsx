@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Display from './display'
 import MovButtons from './movButtons'
+import Marquee from "react-fast-marquee";
 const LeftSideDiv = styled.div`
     width: 50%;
     height: 100%;
@@ -65,16 +66,16 @@ border-right: 70px solid red;
 const Union = styled.div`
   position: absolute;
   height: 10px;
-  width: 50px;
+  width: 70%;
   background: #b90303;
   bottom: 0;
-  left:45%;
+  left:0;
   z-index:4;
 `
 
 const Alert = styled.div`
   position: absolute;
-  top: 2%;
+  top: .2%;
   left: 1rem;
   width:40px;
   height: 40px;
@@ -117,6 +118,9 @@ box-shadow: 0 2px #666;
 transform: translateY(4px);
 }
 `
+const StyledMarquee = styled(Marquee)`
+  a{color: white !important;}
+`
 const LeftSide = () => {
   return (
     <LeftSideDiv>
@@ -126,9 +130,14 @@ const LeftSide = () => {
         <Union />
       </TopBorderTwo>
       <Display />
-      <MovButtons/>
-      <BlackBtn/>
-      <GreenBtn/>
+      <MovButtons />
+      <BlackBtn />
+      <GreenBtn>
+        <StyledMarquee gradient={false} speed={100}>
+          <a href="https://lucianogiraudi.com/" target={'blank_'} rel='noopener noreferrer'>Made by Luciano Giraudi.</a>
+          
+        </StyledMarquee>
+      </GreenBtn>
     </LeftSideDiv>
   )
 }

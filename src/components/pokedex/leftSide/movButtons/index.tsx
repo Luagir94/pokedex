@@ -77,7 +77,7 @@ const DivCenter = styled.div`
 
 `
 const MovButtons = () => {
-    const {selected,list, setSelected, pagination, setUrl, setPrevUrl, url} =usePokedex()
+    const {selected,list, setSelected, pagination, setUrl, setPrevUrl, url, loading} =usePokedex()
 
     const changePoke = (page : 'next' | 'prev') : void=> {
         if (selected?.id) {
@@ -87,7 +87,10 @@ const MovButtons = () => {
                     setPrevUrl?.(url)
                     setUrl?.(pagination.previous)
                 }else{
-                    setSelected?.(list[i-1])
+                    if (i > 0) {
+                        setSelected?.(list[i-1])  
+                    }
+                    
                 }
                 
             }else if (page === 'next'  && typeof page === 'string'){
@@ -105,10 +108,11 @@ const MovButtons = () => {
     return (
         <MovButtonsContainer>
             <DivCenter />
-            <ButtonUp></ButtonUp>
-            <ButtonDown></ButtonDown>
-            <ButtonLeft onClick={() => changePoke('prev')}></ButtonLeft>
-            <ButtonRight onClick={() => changePoke('next')}></ButtonRight>
+            <ButtonUp onClick={() => changePoke('prev')}></ButtonUp>
+            <ButtonDown onClick={() => changePoke('next')}></ButtonDown>
+            <ButtonLeft   title='prev page' onClick={pagination.previous && !loading  ? () : void => {if (typeof pagination.previous === "string") setUrl?.(pagination.previous)} : () : any =>  true}
+ ></ButtonLeft>
+            <ButtonRight  title='next page' onClick={pagination.next && !loading ? () => {if (typeof pagination.next === "string") setUrl?.(pagination.next)}  : () : any =>  true}></ButtonRight>
         </MovButtonsContainer>
     )
 }

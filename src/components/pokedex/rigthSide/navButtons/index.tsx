@@ -1,4 +1,5 @@
 import React from 'react'
+import { usePokedex } from '../../../../context'
 import styled from 'styled-components'
 const NavButtonsContainer = styled.div`
     width: 100%;
@@ -66,14 +67,15 @@ transform: translateY(4px);
 }
 `
 const NavButtons = () => {
+    const { pagination, setUrl , loading} = usePokedex()
     return (
         <NavButtonsContainer>
             <NavigationButtonsContainer>
-                <Button title='prev'></Button>
-                <Button title='next'></Button>
+                <Button ></Button>
+                <Button></Button>
             </NavigationButtonsContainer>
             <AcceptButtonContainer>
-                <AcceptButton/>
+                <AcceptButton />
             </AcceptButtonContainer>
         </NavButtonsContainer>
     )
